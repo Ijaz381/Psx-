@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heaven Smart Calculator</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.85); /* Semi-transparent for background text */
+      --text-color: #ffffff;
+      --btn-bg: #334155;
+      --btn-hover: #475569;
+      --display-bg: #0f172a;
+      --accent-color: #00f6ff;
+    }
+
+    .light-theme {
+      --bg-color: #f1f5f9;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --text-color: #0f172a;
+      --btn-bg: #e2e8f0;
+      --btn-hover: #cbd5e1;
+      --display-bg: #f8fafc;
+      --accent-color: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* BACKGROUND HEAVEN TEXT (WATERMARK) */
+    .bg-text {
+      position: absolute;
+      font-size: 18vw; /* Responsive huge text */
+      font-weight: 900;
+      color: rgba(0, 246, 255, 0.05); /* Soft cyan watermark */
+      user-select: none;
+      z-index: 0;
+      letter-spacing: 10px;
+      text-transform: uppercase;
+      font-family: 'Arial Black', sans-serif;
+    }
+
+    .calc-container {
+      position: relative;
+      z-index: 1; /* Keeps calculator on top of background text */
+      background: var(--card-bg);
+      backdrop-filter: blur(10px); /* Blur effect over background */
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid rgba(0, 246, 255, 0.2);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .header h3 {
+      color: var(--accent-color);
+      letter-spacing: 1px;
+    }
+
+    .theme-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .display {
+      background: var(--display-bg);
+      color: var(--accent-color);
+      font-size: 32px;
+      text-align: right;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      min-height: 70px;
+      word-break: break-all;
+      border: 1px solid #334155;
+    }
+
+    .history-box {
+      font-size: 13px;
+      color: #94a3b8;
+      max-height: 60px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      text-align: right;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: var(--btn-bg);
+      color: var(--text-color);
+    }
+
+    button:hover { background: var(--btn-hover); }
+    button:active { transform: scale(0.95); }
+
+    .btn-op { background: #3b82f6; color: #fff; }
+    .btn-sci { background: #7c3aed; color: #fff; }
+    .btn-clear { background: #ef4444; color: #fff; }
+    .btn-equal { background: #10b981; color: #fff; grid-column: span 2; }
+  </style>
+</head>
+<body>
+
+  <!-- Background Watermark Text -->
+  <div class="bg-text">HEAVEN</div>
+
+  <div class="calc-container">
+    <div class="header">
+      <h3>HEAVEN CALC</h3>
+      <button class="theme-btn" onclick="toggleTheme()">🌙 / ☀️</button>
+    </div>
+
+    <div class="history-box" id="history">ہسٹری یہاں نظر آئے گی</div>
+    <div class="display" id="display">0</div>
+
+    <div class="buttons">
+      <!-- Scientific Keys -->
+      <button class="btn-sci" onclick="calcSci('sin')">sin</button>
+      <button class="btn-sci" onclick="calcSci('cos')">cos</button>
+      <button class="btn-sci" onclick="calcSci('tan')">tan</button>
+      <button class="btn-sci" onclick="calcSci('sqrt')">√</button>
+
+      <button class="btn-clear" onclick="clearDisplay()">C</button>
+      <button onclick="deleteLast()">DEL</button>
+      <button class="btn-op" onclick="appendChar('/')">÷</button>
+      <button class="btn-op" onclick="appendChar('*')">×</button>
+
+      <button onclick="appendChar('7')">7</button>
+      <button onclick="appendChar('8')">8</button>
+      <button onclick="appendChar('9')">9</button>
+      <button class="btn-op" onclick="appendChar('-')">-</button>
+
+      <button onclick="appendChar('4')">4</button>
+      <button onclick="appendChar('5')">5</button>
+      <button onclick="appendChar('6')">6</button>
+      <button class="btn-op" onclick="appendChar('+')">+</button>
+
+      <button onclick="appendChar('1')">1</button>
+      <button onclick="appendChar('2')">2</button>
+      <button onclick="appendChar('3')">3</button>
+      <button onclick="appendChar('.')">.</button>
+
+      <button onclick="appendChar('0')">0</button>
+      <button class="btn-equal" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const history = document.getElementById('history');
+
+    function appendChar(char) {
+      if (display.innerText === '0' || display.innerText === 'Error') {
+        display.innerText = char;
+      } else {
+        display.innerText += char;
+      }
+    }
+
+    function clearDisplay() {
+      display.innerText = '0';
+    }
+
+    function deleteLast() {
+      if (display.innerText.length === 1 || display.innerText === 'Error') {
+        display.innerText = '0';
+      } else {
+        display.innerText = display.innerText.slice(0, -1);
+      }
+    }
+
+    function calculate() {
+      try {
+        let exp = display.innerText;
+        let res = eval(exp);
+        history.innerHTML += `<div>${exp} = ${res}</div>`;
+        display.innerText = res;
+      } catch (e) {
+        display.innerText = 'Error';
+      }
+    }
+
+    function calcSci(type) {
+      try {
+        let val = parseFloat(display.innerText);
+        let res = 0;
+        if (type === 'sin') res = Math.sin(val);
+        if (type === 'cos') res = Math.cos(val);
+        if (type === 'tan') res = Math.tan(val);
+        if (type === 'sqrt') res = Math.sqrt(val);
+        
+        history.innerHTML += `<div>${type}(${val}) = ${res.toFixed(4)}</div>`;
+        display.innerText = res.toFixed(4);
+      } catch (e) {
+        display.innerText = 'Error';
+      }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
+  </script>
+
+</body>
+</html>
